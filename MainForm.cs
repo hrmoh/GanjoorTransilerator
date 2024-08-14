@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GanjoorTransilerator
@@ -15,6 +8,20 @@ namespace GanjoorTransilerator
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void btnSelectDbFile_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "*.s3db|*.s3db";
+                ofd.FileName = "ganjoor.s3db";
+                if(ofd.ShowDialog() == DialogResult.OK)
+                {
+                    txtFilePath.Text = ofd.FileName;
+                }
+            }
+
         }
     }
 }
