@@ -73,9 +73,9 @@ namespace GanjoorTransilerator
                 lblPoet.Text = poet._Name;
                 Application.DoEvents();
 
+                // 1 - poet
                 if (dbOutput.GetPoet(poet._ID) == null)
                 {
-                    //1- poet
                     string poetName = Transilerator.Trasilerate(poet._Name);
                     dbOutput.NewPoet(poetName, poet._ID, poet._CatID);
                     string poetBio = Transilerator.Trasilerate(poet._Bio);
@@ -87,6 +87,14 @@ namespace GanjoorTransilerator
                     var cat = dbInput.GetCategory(catId);
                     lblCat.Text = cat._Text;
                     Application.DoEvents();
+
+                    // 2- cat
+                    if(dbOutput.GetCategory(catId) == null)
+                    {
+                        string catText = Transilerator.Trasilerate(cat._Text);
+                        dbOutput.CreateNewCategory(catText, cat._ParentID, cat._PoetID, catId);
+                    }
+                    
 
                     foreach (var poem in dbInput.GetPoems(catId))
                     {
