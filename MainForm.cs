@@ -1,6 +1,7 @@
 ﻿using ganjoor;
 using System;
 using System.Windows.Forms;
+using System.IO;
 
 namespace GanjoorTransilerator
 {
@@ -41,13 +42,28 @@ namespace GanjoorTransilerator
 
         private void btnConvert_Click(object sender, EventArgs e)
         {
-            DbBrowser dbBrowser = new DbBrowser(txtFilePath.Text);
-            if(!dbBrowser.Connected)
+            DbBrowser dbOutput;
+            if (File.Exists(txtOutputFilePath.Text))
             {
-                MessageBox.Show("خطا در اتصال به پایگاه داده‌ها");
+                dbOutput = new DbBrowser(txtOutputFilePath.Text);
+            }
+            else
+            {
+                dbOutput = DbBrowser.CreateNewPoemDatabase(txtOutputFilePath.Text, true);
+            }
+            if (dbOutput == null || !dbOutput.Connected)
+            {
+                MessageBox.Show("خطا در اتصال به پایگاه داده‌های خروجی");
                 return;
             }
-            var poets = dbBrowser.Poets;
+
+            DbBrowser dbInput = new DbBrowser(txtFilePath.Text);
+            if(!dbInput.Connected)
+            {
+                MessageBox.Show("خطا در اتصال به پایگاه داده‌های ورودی");
+                return;
+            }
+            var poets = dbInput.Poets;
             poets.Sort((a, b) => a._ID.CompareTo(b._ID)); 
             prgrss.Value = 0;
             prgrss.Maximum = poets.Count;
@@ -57,18 +73,18 @@ namespace GanjoorTransilerator
                 lblPoet.Text = poet._Name;
                 Application.DoEvents();
 
-                foreach(var catId in dbBrowser.GetAllSubCats(poet._CatID))
+                foreach(var catId in dbInput.GetAllSubCats(poet._CatID))
                 {
-                    var cat = dbBrowser.GetCategory(catId);
+                    var cat = dbInput.GetCategory(catId);
                     lblCat.Text = cat._Text;
                     Application.DoEvents();
 
-                    foreach (var poem in dbBrowser.GetPoems(catId))
+                    foreach (var poem in dbInput.GetPoems(catId))
                     {
                         lblPoem.Text = poem._Title;
                         Application.DoEvents();
 
-                        foreach (var verse in dbBrowser.GetVerses(poem._ID))
+                        foreach (var verse in dbInput.GetVerses(poem._ID))
                         {
                             lblVerse.Text = verse._Text;
                             Application.DoEvents();
@@ -77,7 +93,7 @@ namespace GanjoorTransilerator
                 }
             }
 
-            dbBrowser.CloseDb();
+            dbInput.CloseDb();
             MessageBox.Show("انجام شد.");
         }
 
