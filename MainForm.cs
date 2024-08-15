@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 
 namespace GanjoorTransilerator
 {
@@ -101,11 +102,30 @@ namespace GanjoorTransilerator
                         lblPoem.Text = poem._Title;
                         Application.DoEvents();
 
+                        //3- poem
+                        if(dbOutput.GetPoem(poem._ID) == null)
+                        {
+                            string poemTitle = Transilerator.Trasilerate(poem._Title);
+                            dbOutput.CreateNewPoem(poemTitle, catId, poem._ID);
+                        }
+
+                        var existingVerses = dbOutput.GetVerses(poem._ID);
+                        if(existingVerses.Count > 0)
+                        {
+                            dbOutput.DeleteVerses(poem._ID, existingVerses.Select(v => v._Order).ToList());
+                        }
+
                         foreach (var verse in dbInput.GetVerses(poem._ID))
                         {
                             lblVerse.Text = verse._Text;
                             Application.DoEvents();
+
+                            //4-verse
+                            dbOutput.CreateNewVerse(poem._ID, verse._Order - 1, verse._Position);
+                            string verseText = Transilerator.Trasilerate(verse._Text);
+                            dbOutput.SetVerseText(poem._ID, verse._Order, verseText);
                         }
+
                     }
                 }
             }
