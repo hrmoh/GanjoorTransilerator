@@ -73,6 +73,11 @@ namespace GanjoorTransilerator
                 lblPoet.Text = poet._Name;
                 Application.DoEvents();
 
+                if (dbOutput.GetPoet(poet._ID) == null)
+                {
+                    dbOutput.NewPoet(poet._Name, poet._ID, poet._CatID);
+                }
+
                 foreach(var catId in dbInput.GetAllSubCats(poet._CatID))
                 {
                     var cat = dbInput.GetCategory(catId);
