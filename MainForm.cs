@@ -75,7 +75,11 @@ namespace GanjoorTransilerator
 
                 if (dbOutput.GetPoet(poet._ID) == null)
                 {
-                    dbOutput.NewPoet(poet._Name, poet._ID, poet._CatID);
+                    //1- poet
+                    string poetName = Transilerator.Trasilerate(poet._Name);
+                    dbOutput.NewPoet(poetName, poet._ID, poet._CatID);
+                    string poetBio = Transilerator.Trasilerate(poet._Bio);
+                    dbOutput.ModifyPoetBio(poet._ID, poetBio);
                 }
 
                 foreach(var catId in dbInput.GetAllSubCats(poet._CatID))
