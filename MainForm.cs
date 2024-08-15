@@ -25,6 +25,20 @@ namespace GanjoorTransilerator
 
         }
 
+        private void btnSelectOutputDbFile_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "*.s3db|*.s3db";
+                sfd.FileName = "output.s3db";
+                sfd.OverwritePrompt = false;
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    txtOutputFilePath.Text = sfd.FileName;
+                }
+            }
+        }
+
         private void btnConvert_Click(object sender, EventArgs e)
         {
             DbBrowser dbBrowser = new DbBrowser(txtFilePath.Text);
@@ -66,5 +80,7 @@ namespace GanjoorTransilerator
             dbBrowser.CloseDb();
             MessageBox.Show("انجام شد.");
         }
+
+        
     }
 }
